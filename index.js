@@ -1,9 +1,14 @@
-const fs = require("fs");
-const axios = require("axios");
-const csvwriter = require("csv-writer");
+const http = require('http')
+const fs = require('fs');
+const axios = require('axios');
+const csvwriter = require('csv-writer');
+const express = require("express");
+const app = express();
+var router = express.Router();
 
-const createCsvWriter = csvwriter.createObjectCsvWriter;
+let port = process.env.PORT || 3000;
 const ADDRESS = "0xE8F57F739ca071C4B4265079E1cE70b8B31B9bc6";
+const createCsvWriter = csvwriter.createObjectCsvWriter;
 
 // unix time conversion function
 function timeConverter(UNIX_timestamp){
@@ -80,3 +85,14 @@ async function main() {
 };
 
 main();
+
+app.get('/download', function(req, res){
+  const file = `${__dirname}/transactions.csv`;
+  res.download(file); // Set disposition and send it.
+});
+
+app.listen(port, () => {
+  console.log(`Server is listening on port http://localhost:${port}/download`);
+});
+
+

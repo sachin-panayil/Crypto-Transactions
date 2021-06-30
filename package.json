@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",
@@ -13,9 +14,13 @@
     "axios": "^0.21.1",
     "csv-writer": "^1.6.0",
     "csvjson": "^5.1.0",
+    "express": "^4.17.1",
     "fetch": "^1.1.0",
     "json-2-csv": "^3.14.1",
     "json2csv": "^5.0.6",
     "node-fetch": "^2.6.1"
+  },
+  "engines": {
+    "node": "14.17.1"
   }
 }
