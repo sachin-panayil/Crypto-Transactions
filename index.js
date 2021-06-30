@@ -7,7 +7,7 @@ const app = express();
 var router = express.Router();
 
 let port = process.env.PORT || 3000;
-const ADDRESS = "0xE8F57F739ca071C4B4265079E1cE70b8B31B9bc6";
+// const ADDRESS = "0xE8F57F739ca071C4B4265079E1cE70b8B31B9bc6";
 const createCsvWriter = csvwriter.createObjectCsvWriter;
 
 // unix time conversion function
@@ -39,7 +39,7 @@ const csvWriter = createCsvWriter({
 
 });
 
-async function main() {
+async function main(ADDRESS) {
 
   // fetch transaction data from API
   const { data: transactionData } = await axios.get(
@@ -84,15 +84,15 @@ async function main() {
 
 };
 
-main();
-
-app.get('/download', function(req, res){
+app.get('/address/:id', function(req, res){
+  main(req.params.id);
   const file = `${__dirname}/transactions.csv`;
   res.download(file); // Set disposition and send it.
 });
 
 app.listen(port, () => {
-  console.log(`Server is listening on port http://localhost:${port}/download`);
+  console.log(`Server is listening on port http://localhost:${port}`);
 });
 
 
+// pass in number, number from url is used as address 
