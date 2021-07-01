@@ -73,12 +73,9 @@ async function createCSVandJSON(ADDRESS) {
 };
 
 app.get('/address/:id', function(req, res) {
-
     createCSVandJSON(req.params.id);
-
     const file = `${__dirname}/transactions.csv`;
     setTimeout(() => { res.download(file); }, 5000) ; // Set disposition and send it.
-
 });
 
 app.listen(port, () => {
@@ -90,19 +87,15 @@ app.listen(port, () => {
 // app.get('/address/:id', function(req, res) {
 
 //   if (fs.existsSync(transactions.csv)) {
-
 //     fs.unlink(transactions.csv);
-
 //     createCSVandJSON(req.params.id);
 //     const file = `${__dirname}/transactions.csv`;
 //     res.download(file); // Set disposition and send it.
 
 //   } else {
-
 //     createCSVandJSON(req.params.id);
 //     const file = `${__dirname}/transactions.csv`;
 //     res.download(file); // Set disposition and send it.
-
 //   };
 
 // });
