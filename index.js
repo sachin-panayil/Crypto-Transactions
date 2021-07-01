@@ -3,26 +3,14 @@ const fs = require('fs');
 const axios = require('axios');
 const csvwriter = require('csv-writer');
 const express = require("express");
+const moment = require("moment");
+
 const app = express();
 var router = express.Router();
 
 let port = process.env.PORT || 3000;
 // const ADDRESS = "0xE8F57F739ca071C4B4265079E1cE70b8B31B9bc6";
 const createCsvWriter = csvwriter.createObjectCsvWriter;
-
-// unix time conversion function
-function timeConverter(UNIX_timestamp){
-  var a = new Date(UNIX_timestamp * 1000);
-  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var year = a.getFullYear();
-  var month = months[a.getMonth()];
-  var date = a.getDate();
-  var hour = a.getHours();
-  var min = a.getMinutes();
-  var sec = a.getSeconds();
-  var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
-  return time; 
-}
 
 const csvWriter = createCsvWriter({
 
@@ -39,7 +27,7 @@ const csvWriter = createCsvWriter({
 
 });
 
-async function main(ADDRESS) {
+async function createCSVandJSON(ADDRESS) {
 
   // fetch transaction data from API
   const { data: transactionData } = await axios.get(
@@ -51,7 +39,7 @@ async function main(ADDRESS) {
   // transform json data into csv writable data
   const results = transactionData.map((transactions) => {
 
-    const row = { Date: timeConverter(transactions.timeStamp) }; // date for each row
+    const row = { Date: moment(+transactionData.timeStamp * 1000).format("MM/DD/YYYY HH:mm:ss") }; // date for each row
 
     row.RQ = transactions.subTransactions
       .filter((subT) => subT.type == "incoming") // checks if type is incoming or outcoming
@@ -84,10 +72,13 @@ async function main(ADDRESS) {
 
 };
 
-app.get('/address/:id', function(req, res){
-  main(req.params.id);
-  const file = `${__dirname}/transactions.csv`;
-  res.download(file); // Set disposition and send it.
+app.get('/address/:id', function(req, res) {
+
+    createCSVandJSON(req.params.id);
+
+    const file = `${__dirname}/transactions.csv`;
+    setTimeout(() => { res.download(file); }, 5000) ; // Set disposition and send it.
+
 });
 
 app.listen(port, () => {
@@ -95,4 +86,23 @@ app.listen(port, () => {
 });
 
 
-// pass in number, number from url is used as address 
+
+// app.get('/address/:id', function(req, res) {
+
+//   if (fs.existsSync(transactions.csv)) {
+
+//     fs.unlink(transactions.csv);
+
+//     createCSVandJSON(req.params.id);
+//     const file = `${__dirname}/transactions.csv`;
+//     res.download(file); // Set disposition and send it.
+
+//   } else {
+
+//     createCSVandJSON(req.params.id);
+//     const file = `${__dirname}/transactions.csv`;
+//     res.download(file); // Set disposition and send it.
+
+//   };
+
+// });
