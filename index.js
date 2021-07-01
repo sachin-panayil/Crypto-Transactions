@@ -12,6 +12,7 @@ let port = process.env.PORT || 3000;
 // const ADDRESS = "0xE8F57F739ca071C4B4265079E1cE70b8B31B9bc6";
 const createCsvWriter = csvwriter.createObjectCsvWriter;
 
+// csv header creation
 const csvWriter = createCsvWriter({
 
   // output csv file name is transactions
@@ -39,7 +40,7 @@ async function createCSVandJSON(ADDRESS) {
   // transform json data into csv writable data
   const results = transactionData.map((transactions) => {
 
-    const row = { Date: moment(+transactionData.timeStamp * 1000).format("MM/DD/YYYY HH:mm:ss") }; // date for each row
+    const row = { Date: moment(transactions.timeStamp * 1000).format("MM/DD/YYYY HH:mm:ss") }; // date for each row
 
     row.RQ = transactions.subTransactions
       .filter((subT) => subT.type == "incoming") // checks if type is incoming or outcoming
@@ -72,30 +73,18 @@ async function createCSVandJSON(ADDRESS) {
 
 };
 
+app.get('/', (req, res) => {
+  res.send("Please type in your address in the URL following /address/ ----- For Example: https://crypto-transactions.herokuapp.com/address/1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2")
+
+})
+
 app.get('/address/:id', function(req, res) {
     createCSVandJSON(req.params.id);
     const file = `${__dirname}/transactions.csv`;
-    setTimeout(() => { res.download(file); }, 5000) ; // Set disposition and send it.
+    setTimeout(() => { res.download(file); }, 3000) ; // sets disposition and sends it with a 5 second delay
 });
 
 app.listen(port, () => {
   console.log(`Server is listening on port http://localhost:${port}`);
 });
 
-
-
-// app.get('/address/:id', function(req, res) {
-
-//   if (fs.existsSync(transactions.csv)) {
-//     fs.unlink(transactions.csv);
-//     createCSVandJSON(req.params.id);
-//     const file = `${__dirname}/transactions.csv`;
-//     res.download(file); // Set disposition and send it.
-
-//   } else {
-//     createCSVandJSON(req.params.id);
-//     const file = `${__dirname}/transactions.csv`;
-//     res.download(file); // Set disposition and send it.
-//   };
-
-// });
